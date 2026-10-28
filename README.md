@@ -36,8 +36,26 @@ Skill 的 `description` 常驻系统提示，每个独立 Skill 都要付一次�
 
 ## 安装
 
+### 一键装（推荐）
+
 ```powershell
 git clone https://github.com/msciu/win-safe-script.git
+cd win-safe-script
+.\scripts\Install-SafeScript.ps1
+```
+
+脚本做四件事：定位源（不在 clone 里就自动从 GitHub 浅克隆）→ 复制 `SKILL.md`/`references/`/`scripts/` → 校验 front matter → 用装好的副本跑一次 `-Check` 自证。
+
+```powershell
+.\scripts\Install-SafeScript.ps1 -DryRun                      # 只看不动
+.\scripts\Install-SafeScript.ps1 -Dest "D:\skills\win-safe-script"   # 换宿主目录
+```
+
+幂等，可当"更新"反复跑；目标目录会被整体替换。
+
+### 手动装
+
+```powershell
 $dest = Join-Path $env:USERPROFILE '.agents\skills\win-safe-script'
 robocopy .\win-safe-script $dest /E /XD .git /NFL /NDL /NJH /NJS   # 排除 .git
 # 新开一个会话后生效（Skill 目录在会话启动时扫描）
@@ -72,6 +90,49 @@ PASS=12 FAIL=0 SKIP=0
 ```
 
 用例覆盖的正是易坏点：源文件故意不写 BOM（执行器补齐）、源文件是 GBK（能救回并标记）、`$var`/`"a b"`/`C:\...\a&b`、位置参数、退出码透传、stderr 中文、超时强杀、大输出截断。缺少某语言解释器时该用例记 `SKIP`，并用"缺解释器必须明确报错"的用例兜底。
+
+## 装好后怎么让 Agent 真的用上
+
+触发靠 `description` 的语义匹配，不是硬规则。三种加码方式，按可靠性排序：
+
+### 1. 项目指令里定规（最推荐）
+
+在当前项目的 `AGENTS.md`（或 `CLAUDE.md`、`.cursor/rules`）里加一段：
+
+```md
+## Windows 脚本执行
+
+- 在 Windows 上执行 PowerShell / Python / Batch / Node 脚本，一律先加载 `win-safe-script` 技能。
+- 禁止 `powershell -Command`、`python -c`、`node -e` 执行多行或含中文的代码；
+  先写文件，再用 `scripts/Invoke-SafeScript.ps1 -File` 跑。
+- 参数放 JSON（`-ParamsJson` / `-ParamsFile`），不拼命令行。
+- 判成功看返回 JSON 的 `ok` 与 `exitCode`，不要只看"有没有报错"。
+- 环境不确定先跑 `Invoke-SafeScript.ps1 -Check`；缺解释器报 `CAPABILITY_MISSING` 时不要改脚本硬重试。
+```
+
+### 2. 一句话点名
+
+> 用 win-safe-script 跑这个脚本
+
+绕过语义匹配直接命中，适合偶发场景。
+
+### 3. 观察调用形态
+
+```
+user  → 把 D:\data 下的 csv 全转成 UTF-8，并汇总行数
+agent → 1) write 工具写 .tmp\convert.ps1
+        2) Invoke-SafeScript.ps1 -File .tmp\convert.ps1 -ParamsFile .tmp\params.json
+        3) 读单行 JSON：ok=true exitCode=0 stdout="…"（长输出看 artifacts.stdoutFile）
+```
+
+### 失败时的固定处置
+
+| 返回 | 处置 |
+|---|---|
+| `CAPABILITY_MISSING` | 先 `-Check`，告诉用户缺什么或用 `-Interpreter` 指路径；不要改脚本硬重试 |
+| `timedOut: true` | 脚本在等输入（`Read-Host` / `pause` / 必填 `param()`），改成 JSON 参数 |
+| 乱码 | 读 `references/symptoms.md` 判方向（读端错，还是写端已经丢数据），不要靠 `chcp` 硬修 |
+| `exitCode` 非 0 且 stderr 为空 | 命令或路径不存在（`9009` 常见于商店版 python 占位符） |
 
 ## 执行器做了什么
 

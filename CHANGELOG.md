@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- 新增 `scripts/Install-SafeScript.ps1`：一条命令安装/更新到 Skills 目录。幂等，支持 `-Dest`（换宿主）、`-DryRun`（只看不动）、`-SkipCheck`；不在 clone 里时自动浅克隆；装完用新副本跑 `-Check` 自证；拒绝源/目标互相包含。
+- README 新增「装好后怎么让 Agent 真的用上」：项目指令块（AGENTS.md / CLAUDE.md）、点名用法、调用形态、失败处置表。
+- CI 新增安装脚本冒烟（装到临时目录 → 校验文件 → 幂等重装）。
+
 ## 1.0.0
 
 首个可发布版本。

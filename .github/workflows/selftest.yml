@@ -28,3 +28,17 @@ jobs:
       - name: 自测（PowerShell 7）
         shell: pwsh
         run: .\scripts\Test-SafeScript.ps1
+
+      - name: 安装脚本冒烟
+        shell: powershell
+        run: |
+          $d = Join-Path $env:TEMP 'wss-ci-install'
+          .\scripts\Install-SafeScript.ps1 -Dest $d -SkipCheck
+          if (-not (Test-Path (Join-Path $d 'SKILL.md'))) { throw 'SKILL.md 未安装' }
+          if (-not (Test-Path (Join-Path $d 'scripts\Invoke-SafeScript.ps1'))) { throw '执行器未安装' }
+          if (-not (Test-Path (Join-Path $d 'references\symptoms.md'))) { throw 'references 未安装' }
+          # 幂等：重装一次并确认结构不变
+          .\scripts\Install-SafeScript.ps1 -Dest $d -SkipCheck
+          $n = @(Get-ChildItem $d -Recurse -File).Count
+          if ($n -lt 10) { throw "文件数异常: $n" }
+          "installed files: $n"
