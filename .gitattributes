@@ -1,0 +1,9 @@
+# 统一行尾，避免 CI 与本地因 CRLF/LF 产生差异
+* text=auto eol=lf
+
+# PowerShell 脚本保持 LF + UTF-8 BOM（BOM 由仓库自带，git 不会改动）
+*.ps1 text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf

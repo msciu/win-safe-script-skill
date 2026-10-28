@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2
+
+- 修复 `Install-SafeScript.ps1` 丢失 UTF-8 BOM（编辑时被剥掉，PS 5.1 按 GBK 解析中文 → `ParserError`，CI 安装冒烟失败）。
+- 守卫自身修 bug：CI checkout 为 CRLF，`name:` 行尾带 `\r`、`description` 多算 1 字导致误报；改为按 `\r?\n` 切分并 `Trim()`，新增 `.gitattributes` 统一行尾。
+- 自测 14 项全通过（本地 + CI 双环境）。
+
 ## 1.1.1
 
 - 仓库更名为 `win-safe-script-skill`（`-skill` 后缀标示这是 skill 仓库）；技能名仍是 `win-safe-script`，Agent 调用与安装目录不变。

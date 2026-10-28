@@ -144,17 +144,19 @@ else {
 # 0.2) 仓库自身守卫二：SKILL.md 的 front matter 可解析
 $skillPath = Join-Path (Split-Path -Parent $PSScriptRoot) 'SKILL.md'
 if (Test-Path -LiteralPath $skillPath) {
+    # 行尾可能是 LF（本地）或 CRLF（CI checkout），统一按 \r?\n 切；BOM 若存在也先剥掉
     $skillText = [System.IO.File]::ReadAllText($skillPath, [System.Text.Encoding]::UTF8)
-    $skillLines = $skillText -split "`n"
-    $nameOk = @($skillLines | Where-Object { $_ -like 'name:*' }) -contains 'name: win-safe-script'
-    $descLine = @($skillLines | Where-Object { $_ -like 'description:*' })[0]
+    $skillText = $skillText.TrimStart([char]0xFEFF)
+    $skillLines = $skillText -split "`r?`n"
+    $nameOk = @($skillLines | Where-Object { $_.Trim() -eq 'name: win-safe-script' }).Count -gt 0
+    $descLine = @($skillLines | Where-Object { $_.Trim().StartsWith('description:') })[0]
     $descLen = 0
-    if ($descLine) { $descLen = ($descLine -replace '^description:\s*', '').Length }
+    if ($descLine) { $descLen = (($descLine.Trim() -replace '^description:\s*', '')).Length }
     if ($skillLines[0].Trim() -eq '---' -and $nameOk -and $descLen -gt 20 -and $descLen -le 1024) {
         Add-Row 'repo/skill-frontmatter' 'PASS' ('name=win-safe-script, description=' + $descLen + ' 字')
     }
     else {
-        Add-Row 'repo/skill-frontmatter' 'FAIL' ('name/description 异常（desc=' + $descLen + ' 字）')
+        Add-Row 'repo/skill-frontmatter' 'FAIL' ('name/description 异常（nameOk=' + $nameOk + ' desc=' + $descLen + ' 字）')
     }
 }
 else { Add-Row 'repo/skill-frontmatter' 'SKIP' '未找到 SKILL.md（只装了 scripts/）' }
