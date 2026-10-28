@@ -4,6 +4,7 @@
 
 - 仓库更名为 `win-safe-script-skill`（`-skill` 后缀标示这是 skill 仓库）；技能名仍是 `win-safe-script`，Agent 调用与安装目录不变。
 - 同步更新 README 徽章/克隆地址、`Install-SafeScript.ps1 -Repo` 默认值、手动安装路径。
+- 自测新增两道仓库守卫：`repo/ps1-bom`（脚本丢 BOM 直接 FAIL）、`repo/skill-frontmatter`（front matter 可解析）。本轮改名时 `Install-SafeScript.ps1` 的 BOM 被编辑器剥掉，CI 立刻抓到——于是把这类检查固化进自测。
 
 ## 1.1.0
 

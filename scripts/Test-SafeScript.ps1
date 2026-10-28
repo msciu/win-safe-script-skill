@@ -127,6 +127,38 @@ if ($cap.ok) {
 }
 else { Add-Row 'env/probe' 'FAIL' $capRaw }
 
+# 0.1) 仓库自身守卫一：scripts/*.ps1 必须是 UTF-8 BOM
+#      没有 BOM 时 Windows PowerShell 5.1 按 ANSI(936) 解析中文，直接 ParserError。
+$psFiles = @(Get-ChildItem -Path (Join-Path $PSScriptRoot '*.ps1') -ErrorAction SilentlyContinue)
+$noBom = @($psFiles | Where-Object {
+        $bytes = [System.IO.File]::ReadAllBytes($_.FullName)
+        -not ($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF)
+    })
+if ($noBom.Count -eq 0) {
+    Add-Row 'repo/ps1-bom' 'PASS' ($psFiles.Count.ToString() + ' 个 .ps1 均为 UTF-8 BOM')
+}
+else {
+    Add-Row 'repo/ps1-bom' 'FAIL' ('缺 BOM: ' + (($noBom | ForEach-Object { $_.Name }) -join ', '))
+}
+
+# 0.2) 仓库自身守卫二：SKILL.md 的 front matter 可解析
+$skillPath = Join-Path (Split-Path -Parent $PSScriptRoot) 'SKILL.md'
+if (Test-Path -LiteralPath $skillPath) {
+    $skillText = [System.IO.File]::ReadAllText($skillPath, [System.Text.Encoding]::UTF8)
+    $skillLines = $skillText -split "`n"
+    $nameOk = @($skillLines | Where-Object { $_ -like 'name:*' }) -contains 'name: win-safe-script'
+    $descLine = @($skillLines | Where-Object { $_ -like 'description:*' })[0]
+    $descLen = 0
+    if ($descLine) { $descLen = ($descLine -replace '^description:\s*', '').Length }
+    if ($skillLines[0].Trim() -eq '---' -and $nameOk -and $descLen -gt 20 -and $descLen -le 1024) {
+        Add-Row 'repo/skill-frontmatter' 'PASS' ('name=win-safe-script, description=' + $descLen + ' 字')
+    }
+    else {
+        Add-Row 'repo/skill-frontmatter' 'FAIL' ('name/description 异常（desc=' + $descLen + ' 字）')
+    }
+}
+else { Add-Row 'repo/skill-frontmatter' 'SKIP' '未找到 SKILL.md（只装了 scripts/）' }
+
 # 0) 子进程形态冒烟：代理通过 CLI 调执行器时退出码必须透传
 $smokeDir = New-RunDir 'smoke'
 $smokeSrc = Join-Path $srcDir 'smoke.ps1'

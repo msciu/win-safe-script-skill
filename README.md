@@ -77,6 +77,8 @@ CI 在 `windows-latest` 上同时跑 **Windows PowerShell 5.1** 与 **PowerShell
 
 ```
 env/probe                PASS   ps=5.1.26100.9711 py=True node=True activeCp=936
+repo/ps1-bom             PASS   3 个 .ps1 均为 UTF-8 BOM
+repo/skill-frontmatter   PASS   name=win-safe-script, description=646 字
 cli/child-process        PASS   exit=5 透传，中文正常
 ps1/utf8-no-bom          PASS   exit=0
 ps1/exit-42              PASS   exit=42
@@ -88,10 +90,12 @@ ps1/timeout-kill         PASS   timedOut=true
 ps1/truncate             PASS   3000 行，返回截断，artifact 完整
 error/file-not-found     PASS   FILE_NOT_FOUND
 error/bad-json           PASS   PARAMS_INVALID
-PASS=12 FAIL=0 SKIP=0
+PASS=14 FAIL=0 SKIP=0
 ```
 
 用例覆盖的正是易坏点：源文件故意不写 BOM（执行器补齐）、源文件是 GBK（能救回并标记）、`$var`/`"a b"`/`C:\...\a&b`、位置参数、退出码透传、stderr 中文、超时强杀、大输出截断。缺少某语言解释器时该用例记 `SKIP`，并用"缺解释器必须明确报错"的用例兜底。
+
+最后两项 `repo/*` 是**对仓库自身的守卫**：`.ps1` 丢了 UTF-8 BOM、或 `SKILL.md` 的 front matter 坏掉，自测直接 FAIL。这条是踩出来的——改仓库名时 `Install-SafeScript.ps1` 的 BOM 被编辑操作剥掉，CI 的安装冒烟立刻报 `ParserError`。
 
 ## 装好后怎么让 Agent 真的用上
 
@@ -160,7 +164,7 @@ agent → 1) write 工具写 .tmp\convert.ps1
 
 ## 贡献
 
-改 `scripts/` 后请先跑 `Test-SafeScript.ps1`（13 项，缺解释器记 SKIP 但不得 FAIL）；CI 会在 `windows-latest` 上重跑。编码相关改动请在 PR 里附上 `-Check` 输出，便于确认验证环境。
+改 `scripts/` 后请先跑 `Test-SafeScript.ps1`（14 项，含两道仓库守卫；缺解释器记 SKIP 但不得 FAIL）；CI 会在 `windows-latest` 上重跑。编码相关改动请在 PR 里附上 `-Check` 输出，便于确认验证环境。
 
 ## 许可证
 
