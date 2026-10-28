@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- 仓库更名为 `win-safe-script-skill`（`-skill` 后缀标示这是 skill 仓库）；技能名仍是 `win-safe-script`，Agent 调用与安装目录不变。
+- 同步更新 README 徽章/克隆地址、`Install-SafeScript.ps1 -Repo` 默认值、手动安装路径。
+
 ## 1.1.0
 
 - 新增 `scripts/Install-SafeScript.ps1`：一条命令安装/更新到 Skills 目录。幂等，支持 `-Dest`（换宿主）、`-DryRun`（只看不动）、`-SkipCheck`；不在 clone 里时自动浅克隆；装完用新副本跑 `-Check` 自证；拒绝源/目标互相包含。

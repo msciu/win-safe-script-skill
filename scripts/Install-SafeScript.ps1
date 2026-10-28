@@ -1,4 +1,4 @@
-﻿#requires -Version 5.1
+#requires -Version 5.1
 <#
 .SYNOPSIS
     把 win-safe-script 安装/更新到 Agent Skills 目录，并自证可用。
@@ -33,7 +33,7 @@
 [CmdletBinding()]
 param(
     [string]$Dest,
-    [string]$Repo = 'https://github.com/msciu/win-safe-script.git',
+    [string]$Repo = 'https://github.com/msciu/win-safe-script-skill.git',
     [switch]$DryRun,
     [switch]$SkipCheck
 )

@@ -1,6 +1,6 @@
 # win-safe-script
 
-[![selftest](https://github.com/msciu/win-safe-script/actions/workflows/selftest.yml/badge.svg)](https://github.com/msciu/win-safe-script/actions/workflows/selftest.yml)
+[![selftest](https://github.com/msciu/win-safe-script-skill/actions/workflows/selftest.yml/badge.svg)](https://github.com/msciu/win-safe-script-skill/actions/workflows/selftest.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Windows 上让 Agent 执行脚本时**不出编码事故**的一套东西：一个入口 Skill + 四份按语言对症的模板 + 一个确定性执行器 + 一个自测矩阵。
@@ -8,6 +8,8 @@ Windows 上让 Agent 执行脚本时**不出编码事故**的一套东西：一�
 起因：在 Windows 上让 Agent 跑 `powershell -Command "..."` 或 `python -c "..."`，多行代码、中文、`$`、引号、反斜杠几乎必坏，于是出现"PowerShell 又把内联 JS 搞坏了，改用脚本文件"这类反复试错。本套装把这条经验固化成**默认路径**。
 
 适用于任何支持 Agent Skills 的宿主（Claude Code、DeepSeek Harness 等）：`SKILL.md` + `references/` + `scripts/` 的目录结构，描述驱动触发，正文与模板按需加载。
+
+> 命名：仓库名带 `-skill` 后缀表示这是一个 skill 仓库；**技能名仍是 `win-safe-script`**——Agent 调用、`SKILL.md` 的 `name` 字段、安装目录都用这个名字，只有仓库地址多了后缀。
 
 ## 目录
 
@@ -39,8 +41,8 @@ Skill 的 `description` 常驻系统提示，每个独立 Skill 都要付一次�
 ### 一键装（推荐）
 
 ```powershell
-git clone https://github.com/msciu/win-safe-script.git
-cd win-safe-script
+git clone https://github.com/msciu/win-safe-script-skill.git
+cd win-safe-script-skill
 .\scripts\Install-SafeScript.ps1
 ```
 
@@ -57,7 +59,7 @@ cd win-safe-script
 
 ```powershell
 $dest = Join-Path $env:USERPROFILE '.agents\skills\win-safe-script'
-robocopy .\win-safe-script $dest /E /XD .git /NFL /NDL /NJH /NJS   # 排除 .git
+robocopy .\win-safe-script-skill $dest /E /XD .git /NFL /NDL /NJH /NJS   # 排除 .git
 # 新开一个会话后生效（Skill 目录在会话启动时扫描）
 ```
 
