@@ -48,8 +48,10 @@ robocopy .\win-safe-script $dest /E /XD .git /NFL /NDL /NJH /NJS   # 排除 .git
 ## 验证
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\win-safe-script\scripts\Test-SafeScript.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-SafeScript.ps1
 ```
+
+CI 在 `windows-latest` 上同时跑 **Windows PowerShell 5.1** 与 **PowerShell 7** 两档，均为阻断式（徽章见仓库首页）。
 
 参考环境（Windows PowerShell 5.1 / 控制台代码页 936 / Node 24 / conda Python 3.12.7）实测：
 
@@ -89,7 +91,6 @@ PASS=12 FAIL=0 SKIP=0
 
 ## 已知限制
 
-- `pwsh`（PowerShell 7）分支未单测：本参考环境只有 Windows PowerShell 5.1。用 `-Interpreter pwsh.exe` 可指定，但脚本兼容性需自行确认。
 - 参数值含双引号或换行时不内联进 bat（只在 `params.json`），执行器会在 `notes` 里说明。
 - 交互式脚本（`Read-Host`/`pause`/必填 `param()`）会走到超时，这是设计选择，不是缺陷。
 - 需要 UAC 提权、GUI、长驻服务的脚本不适用。

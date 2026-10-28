@@ -25,8 +25,6 @@ jobs:
         shell: powershell
         run: .\scripts\Test-SafeScript.ps1
 
-      # 本机开发环境没有 pwsh 7，这一档先跑通再改为阻断
-      - name: 自测（PowerShell 7，实验）
+      - name: 自测（PowerShell 7）
         shell: pwsh
-        continue-on-error: true
         run: .\scripts\Test-SafeScript.ps1
