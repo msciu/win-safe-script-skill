@@ -1,0 +1,15 @@
+# 运行产物（Invoke-SafeScript 默认写 %TEMP%\win-safe-script，这里兜住本地调试残留）
+*.tmp
+*.log
+.wss/
+wss-*/
+acl-recovery/
+.acl-recovery/
+result.json
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

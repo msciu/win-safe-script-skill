@@ -1,0 +1,32 @@
+name: selftest
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    name: Windows script encoding self-test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 环境概览
+        shell: powershell
+        run: |
+          $PSVersionTable.PSVersion.ToString()
+          [Console]::OutputEncoding.WebName
+          (Get-Command python.exe -ErrorAction SilentlyContinue).Source
+          (Get-Command node.exe -ErrorAction SilentlyContinue).Source
+          .\scripts\Invoke-SafeScript.ps1 -Check
+
+      - name: 自测（Windows PowerShell 5.1）
+        shell: powershell
+        run: .\scripts\Test-SafeScript.ps1
+
+      # 本机开发环境没有 pwsh 7，这一档先跑通再改为阻断
+      - name: 自测（PowerShell 7，实验）
+        shell: pwsh
+        continue-on-error: true
+        run: .\scripts\Test-SafeScript.ps1
