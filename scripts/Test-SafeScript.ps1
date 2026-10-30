@@ -151,12 +151,16 @@ if (Test-Path -LiteralPath $skillPath) {
     $nameOk = @($skillLines | Where-Object { $_.Trim() -eq 'name: win-safe-script' }).Count -gt 0
     $descLine = @($skillLines | Where-Object { $_.Trim().StartsWith('description:') })[0]
     $descLen = 0
-    if ($descLine) { $descLen = (($descLine.Trim() -replace '^description:\s*', '')).Length }
-    if ($skillLines[0].Trim() -eq '---' -and $nameOk -and $descLen -gt 20 -and $descLen -le 1024) {
+    $desc = ''
+    if ($descLine) { $desc = ($descLine.Trim() -replace '^description:\s*', ''); $descLen = $desc.Length }
+    # YAML 普通标量（没加引号）里出现 ASCII 冒号+空格（如 "English: ..."）会让 front matter 解析失败，
+    # 宿主会把 skill 从目录里静默丢掉——2026-10-30 用 "English: " 真实踩到过，这里固化成守卫。
+    $colonOk = -not $desc.Contains(': ')
+    if ($skillLines[0].Trim() -eq '---' -and $nameOk -and $descLen -gt 20 -and $descLen -le 1024 -and $colonOk) {
         Add-Row 'repo/skill-frontmatter' 'PASS' ('name=win-safe-script, description=' + $descLen + ' 字')
     }
     else {
-        Add-Row 'repo/skill-frontmatter' 'FAIL' ('name/description 异常（nameOk=' + $nameOk + ' desc=' + $descLen + ' 字）')
+        Add-Row 'repo/skill-frontmatter' 'FAIL' ('name/description 异常（nameOk=' + $nameOk + ' desc=' + $descLen + ' 字 colonOk=' + $colonOk + '）')
     }
 }
 else { Add-Row 'repo/skill-frontmatter' 'SKIP' '未找到 SKILL.md（只装了 scripts/）' }

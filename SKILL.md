@@ -1,6 +1,6 @@
 ---
 name: win-safe-script
-description: 在 Windows 上跑脚本、执行脚本、写脚本、调试脚本、批量处理文件（转码、重命名、汇总行数）用本技能：PowerShell(.ps1)、Python(.py)、Batch/CMD(.bat)、Node.js(.js)，含中文/emoji/空格/反斜杠路径；也用于把 bash 脚本移植到 Windows 上跑、确认 python/node/pwsh/py 是否可用（含 conda、WindowsApps 占位符）。English: run/execute/debug a Windows script; inline -Command / python -c / node -e breaks. 症状：中文乱码、GBK/UTF-8 BOM/代码页 936 或 65001、ParserError、NativeCommandError、UnicodeEncodeError、UnicodeDecodeError、引号或反斜杠被吞、$ 被提前展开、bat echo 中文乱码、脚本没输出、stdout 与 stderr 混在一起、退出码丢失或非 0、脚本超时被杀、输出被截断。
+description: 在 Windows 上跑脚本、执行脚本、写脚本、调试脚本、批量处理文件（转码、重命名、汇总行数）用本技能：PowerShell(.ps1)、Python(.py)、Batch/CMD(.bat)、Node.js(.js)，含中文/emoji/空格/反斜杠路径；也用于把 bash 脚本移植到 Windows 上跑、确认 python/node/pwsh/py 是否可用（含 conda、WindowsApps 占位符）。英文触发：run/execute/debug a Windows script; inline -Command / python -c / node -e breaks. 症状：中文乱码、GBK/UTF-8 BOM/代码页 936 或 65001、ParserError、NativeCommandError、UnicodeEncodeError、UnicodeDecodeError、引号或反斜杠被吞、$ 被提前展开、bat echo 中文乱码、脚本没输出、stdout 与 stderr 混在一起、退出码丢失或非 0、脚本超时被杀、输出被截断。
 ---
 
 # win-safe-script
