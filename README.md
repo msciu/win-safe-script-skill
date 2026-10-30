@@ -78,7 +78,7 @@ CI 在 `windows-latest` 上同时跑 **Windows PowerShell 5.1** 与 **PowerShell
 ```
 env/probe                PASS   ps=5.1.26100.9711 py=True node=True activeCp=936
 repo/ps1-bom             PASS   3 个 .ps1 均为 UTF-8 BOM
-repo/skill-frontmatter   PASS   name=win-safe-script, description=646 字
+repo/skill-frontmatter   PASS   name=win-safe-script, description=485 字
 cli/child-process        PASS   exit=5 透传，中文正常
 ps1/utf8-no-bom          PASS   exit=0
 ps1/exit-42              PASS   exit=42

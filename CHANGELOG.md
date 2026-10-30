@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.1
+
+- 修 `description` 里的 ASCII 冒号：写成 `English: ...` 会让 YAML 普通标量解析失败，宿主把整个 skill 从目录里**静默丢掉**（本次实测命中一次：改完描述后 catalog 里技能直接消失）。改为「英文触发：」，用全角冒号。
+- 自测守卫加强：`repo/skill-frontmatter` 现在同时检查 `description` 不含 ASCII 冒号+空格，同类问题下次直接 FAIL 而不是静默消失。
+
+## 1.2.0
+
+- 重写 `description` 为「动作入口 + 症状入口 + 英文触发」三段，489 字（1.2.1 修正后 485 字）。宿主在技能目录里只展示描述的前约 494 字，旧描述 646 字，末尾「退出码丢失 / 脚本超时 / 输出被截断 / bash 迁移 / 解释器探测」这些触发词全被截掉——现在全量可见。
+- 触发面从「只有报错症状」扩大到「跑 / 执行 / 写 / 调试脚本、批量处理文件（转码、重命名、汇总行数）、bash 脚本移植到 Windows、动手前确认 python/node/pwsh/py、英文 run/execute/debug」。盲测 3 个独立 judge × 14 条话术：旧描述 29/36 命中，新描述 36/36，两个硬负例（写新 skill、纯 Linux bash）均不误触发。
+- 措辞收窄：「把 bash/Linux 脚本迁到 Windows」→「把 bash 脚本移植到 Windows 上跑」，降低纯 Linux 任务的误触发（盲测里唯一的退步项）。
+
 ## 1.1.2
 
 - 修复 `Install-SafeScript.ps1` 丢失 UTF-8 BOM（编辑时被剥掉，PS 5.1 按 GBK 解析中文 → `ParserError`，CI 安装冒烟失败）。
