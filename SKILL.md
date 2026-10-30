@@ -1,6 +1,6 @@
 ---
 name: win-safe-script
-description: 在 Windows 上安全执行 PowerShell、Python、Batch(CMD)、Node.js 脚本：先落临时文件再执行、禁止 -Command/-c 内联，按语言强制编码（PS1=UTF-8 BOM，BAT=UTF-8 无 BOM + chcp 65001，PY/JS=UTF-8），参数经 JSON 与环境变量传递，stdout/stderr 按 UTF-8 严格解码（非法字节回退 GBK 并标记），以单个 JSON 返回退出码、输出与产物路径；内置解释器探测（含 conda）与编码自测。遇到以下情况时使用：中文乱码、GBK 或 UTF-8 BOM 或代码页 936/65001 相关异常、ParserError、NativeCommandError、UnicodeEncodeError、UnicodeDecodeError、SyntaxError、引号或反斜杠被吞、$ 被提前展开、"PowerShell 把内联 JS 搞坏"、-Command 或 -c 或内联命令不可靠、python -c 失败、bat echo 中文乱码、脚本跑完没输出、stdout 与 stderr 混在一起、退出码丢失、脚本超时或输出被截断；也用于把多行脚本、含中文或空格路径的脚本交给 Windows 执行，把 bash/Linux 脚本迁到 Windows，以及动手前确认 python、node、pwsh、py 是否可用（尤其 conda 环境和 WindowsApps 商店占位符）。
+description: 在 Windows 上跑脚本、执行脚本、写脚本、调试脚本、批量处理文件（转码、重命名、汇总行数）用本技能：PowerShell(.ps1)、Python(.py)、Batch/CMD(.bat)、Node.js(.js)，含中文/emoji/空格/反斜杠路径；也用于把 bash 脚本移植到 Windows 上跑、确认 python/node/pwsh/py 是否可用（含 conda、WindowsApps 占位符）。English: run/execute/debug a Windows script; inline -Command / python -c / node -e breaks. 症状：中文乱码、GBK/UTF-8 BOM/代码页 936 或 65001、ParserError、NativeCommandError、UnicodeEncodeError、UnicodeDecodeError、引号或反斜杠被吞、$ 被提前展开、bat echo 中文乱码、脚本没输出、stdout 与 stderr 混在一起、退出码丢失或非 0、脚本超时被杀、输出被截断。
 ---
 
 # win-safe-script
